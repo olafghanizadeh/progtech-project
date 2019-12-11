@@ -15,7 +15,7 @@ cols = ['player.id_in_group', 'player.risk', 'session.code']
 usecols = cols + choices
 
 # Create the dataframe from CSV
-df = pd.read_csv('../Data/risk_lottery_2019-12-11.csv', usecols=usecols)
+df = pd.read_csv('data/risk_lottery_2019-12-11.csv', usecols=usecols)
 
 # We only want the data from the relevant session
 df = df.loc[df['session.code'] == '32nbns7y']
