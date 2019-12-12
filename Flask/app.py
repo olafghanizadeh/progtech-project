@@ -54,12 +54,12 @@ def index():
     return render_template("index.html", data=data)
 
 
-@app.route('/participant/<participant_id>', methods=['GET'])
-def show_partcipant(participant_id):
-    for user in participant_id:
-        participant_id = user
-    return render_template('user.html', participant_id=participant_id)
+# @app.route('/participant/<participant_id>', methods=['GET'])
+# def show_partcipant(participant_id):
+#     for user in participant_id:
+#         participant_id = user
+#     return render_template('user.html', participant_id=participant_id)
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
