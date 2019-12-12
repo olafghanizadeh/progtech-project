@@ -148,9 +148,9 @@ We call the \mintinline{python}{self.player.set_payoffs()} before the next page 
 \begin{frame}{Experiment}
 
   \begin{itemize}
-    \item A simplified version of the experiment popularized in \textcite{holt_risk_2002}.
-    \item An approach to elicit individual preferences for risk in various contexts.
-    \item Assumes that Constant Relative Risk Aversion holds
+    \item A simplified version of the experiment popularized in \textcite{holt_risk_2002}
+    \item An approach to elicit individual preferences for risk in various contexts
+    \item Assumes that Constant Relative Risk Aversion is valid
   \end{itemize}
   
 \end{frame}
@@ -165,7 +165,7 @@ We call the \mintinline{python}{self.player.set_payoffs()} before the next page 
   \begin{itemize}
     \item A risk-neutral user should consider the expected values of the different outcomes, and maximize it for each choice. 
     \item In our experiment that is the sequence: AAA/BBBBB
-    \item The number of safe choices (A), or the switching point, can be used to estimate risk preferences and the parameters of an individual utility function. 
+    \item The number of safe choices (A), or the switching point, can be used to estimate the parameters of an individual utility function and the participant's risk preferences.
   \end{itemize}
 \end{frame}
 
@@ -198,13 +198,7 @@ We call the \mintinline{python}{self.player.set_payoffs()} before the next page 
 \end{figure}
 \end{frame}
 
-\begin{frame}{Flask Application}
-  \url{https://progtech-flask-app.herokuapp.com/}
-  \begin{itemize}
-    \item Passes the data from Pandas to Flask
-    \item Using d3.js for visualization
-  \end{itemize}
-\end{frame}
+
 
 
 \begin{frame}{A random sample}
@@ -220,39 +214,28 @@ We call the \mintinline{python}{self.player.set_payoffs()} before the next page 
 \end{figure}
 \end{frame}
 
-\begin{frame}
-  \Huge\input{includes/drawn_name.txt}
+
+\begin{frame}{Flask Application}
+  \url{https://progtech-flask-app.herokuapp.com/}
+  \begin{itemize}
+    \item Passes the data cleaned with Pandas to Flask
+    \item Using d3.js for visualization
+    \item Numpy to draw 2 random participants
+  \end{itemize}
 \end{frame}
-
-
-
-
-
-
-
-
-
-
-
-
-\begin{frame}{References}
-  \printbibliography[heading=none]
-\end{frame}
-
-
-
 
 {\setbeamercolor{palette primary}{fg=black, bg=yellow}
-\begin{frame}[standout]
-  Questions?
+\begin{frame}{Questions?}
   \begin{description}
-      \item[Experiment code:] \url{https://github.com/olafghanizadeh/hl_mpl}
-      \item[Project files:] \url{https://github.com/olafghanizadeh/hl_mpl}
+      \item[Experiment code:] \href{https://github.com/olafghanizadeh/hl_mpl}{github.com/olafghanizadeh/hl\_mpl}
+      \item[Project files:] \href{https://github.com/olafghanizadeh/progtech-project}{github.com/olafghanizadeh/progtech-project}
   \end{description}
 \end{frame}
 }
 
-
+\begin{frame}{References}
+  \printbibliography[heading=none]
+\end{frame}
 
 
 
