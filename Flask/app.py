@@ -10,7 +10,7 @@ app = Flask(__name__)
 # Create a list of the column names corresponding with the number of choices in df
 choices = ["player.choice_" + str(i) for i in range(1, 9)]
 # Select the other columns we want
-cols = ['player.id_in_group', 'player.risk', 'session.code']
+cols = ['player.id_in_group', 'player.name', 'player.risk', 'session.code']
 # Merge the two lists
 usecols = cols + choices
 
@@ -26,7 +26,11 @@ df = df.dropna()
 # Drop an irrelevant entry (Last Entry in Session)
 df = df.drop(df.index[-1])
 
-aggregate = df.iloc[:, 2:10]
+winners = df.sample(n=2)
+winners = winners['player.name'].to_list()
+len_winners = len(winners)
+
+aggregate = df.iloc[:, 2:11]
 
 
 def safe_choices(df):
@@ -40,18 +44,17 @@ def safe_choices(df):
 
 safeChoices = safe_choices(aggregate)
 
-risk_averse = [1, 1, 1, 1, 1, 1, 1, 1]
 risk_neutral = [1, 1, 1, 0, 0, 0, 0, 0]
-risk_loving = [0, 0, 0, 0, 0, 0, 0, 0]
 
 
 @app.route("/")
 def index():
+    n = df.shape[0]
     chart_df = pd.DataFrame({'safeChoice': safeChoices, 'riskNeutral': risk_neutral})
     chart_data = chart_df.to_dict(orient='records')
     chart_data = json.dumps(chart_data, indent=2)
     data = {'chart_data': chart_data}
-    return render_template("index.html", data=data)
+    return render_template("index.html", data=data, n=n, winners=winners, len_winners=len_winners)
 
 
 # @app.route('/participant/<participant_id>', methods=['GET'])

@@ -1,173 +1,230 @@
 <!doctype html>
 <html lang="en">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.min.css"
-  integrity="sha256-L/W5Wfqfa0sdBNIKN9cG6QA5F2qx4qICmU2VgLruv9Y=" crossorigin="anonymous" />
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"
+        integrity="sha384-6khuMg9gaYr5AxOqhkVIODVIvm9ynTT5J4V1cfthmT+emCG6yVmEZsRHdxlotUnm"
+        crossorigin="anonymous"></script>
 
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Choices Visualized</title>
+    <title>Choices Visualized</title>
 
-<style>
-.line {
-    fill: none;
-    stroke: blue;
-    stroke-width: 3;
-}
+    <style>
+        .line {
+            fill: none;
+            stroke: #69b3a2;
+            stroke-width: 2;
+        }
 
-.riskNeutral {
-    fill: none;
-    stroke: #000;
-    stroke-width: 3;
-    stroke-dasharray: 5,5;
-}
+        .riskNeutral {
+            fill: none;
+            stroke: #000;
+            stroke-width: 2;
+            stroke-dasharray: 5, 5;
+        }
 
-.overlay {
-  fill: none;
-  pointer-events: all;
-}
+        .overlay {
+            fill: none;
+            pointer-events: all;
+        }
 
-/* Style the dots by assigning a fill and stroke */
-.dot {
-    fill: blue;
-    stroke: #fff;
-}
+        /* Style the dots by assigning a fill and stroke */
+        .dot {
+            fill: #69b3a2;
+            stroke: #fff;
+        }
 
-  .focus circle {
-  fill: none;
-  stroke: steelblue;
-}
-</style>
+        .focus circle {
+            fill: none;
+            stroke: steelblue;
+        }
+    </style>
 </head>
 
 <body>
-  <div class="container">
+<div class="jumbotron jumbotron-fluid min-vh-100 mb-0">
+    <div class="container">
+        <h1 class="display-1 mb-5">A Simple Flask App</h1>
 
-    <h1>Choices Visualized</h1>
-      <div class="card">
-          <h2 class="card-header">Choices visualized</h2>
-        <div class="card-img" id="graphDiv"></div>
-          <div class="card-body">
-              <p>This is the visualization of the choices made by the 20 participants in the experiment.</p>
-          </div>
-      </div>
-  </div>
+        <div class="row">
 
+            <div class="col-8">
+                <div class="card">
+                    <h2 class="card-header">Choices visualized</h2>
+                    <div class="card-body">
+                        <div id="graphDiv"></div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-4">
+                <div class="card mb-5">
+                    <div class="card-body">
+                        <p class="display-2 font-weight-bold">{{n}}</p>
+                        <p class="display-4 ">Participants</p>
+                    </div>
+                </div>
+
+                <div class="card mb-5">
+                    <div class="card-body">
+                        <p class="display-2 font-weight-bold">{{len_winners}}</p>
+                        <p class="display-4 ">Winners</p>
+                        <button class="btn btn-primary" type="button" data-toggle="collapse"
+                                data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                            Click to reveal
+                        </button>
+                        <div class="collapse mt-4" id="collapseExample">
+                          <ol>
+                            {% for winner in winners %}
+                            <li>{{winner}}</li>
+                            {% endfor %}
+                            </ol>
+                        </div>
+
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
 
 
 <script src="https://d3js.org/d3.v5.min.js"></script>
-  <script>
+<script>
 
 
-// 2. Use the margin convention practice
-var margin = {top: 20, right: 200, bottom: 50, left: 200}
-  , width = 960 - margin.left - margin.right // Use the window's width
-  , height = 500- margin.top - margin.bottom; // Use the window's height
+    // 2. Use the margin convention practice
+    var margin = {top: 20, right: 30, bottom: 50, left: 30}
+        , width = 960 - margin.left - margin.right // Use the window's width
+        , height = 500 - margin.top - margin.bottom; // Use the window's height
 
 
-// The number of datapoints
-var n = 9;
-
-// 5. X scale will use the index of our data
-var xScale = d3.scaleLinear()
-    .domain([1, 8]) // input
-    .range([0, width]); // output
-
-// 6. Y scale will use the randomly generate number
-var yScale = d3.scaleLinear()
-    .domain([0, 1]) // input
-    .range([height, 0]); // output
-
-// 7. d3's line generator
-var safeChoices = d3.line()
-    .x(function(d, i) { return xScale(i + 1); }) // set the x values for the line generator
-    .y(function(d) { return yScale(d.safeChoice); }) // set the y values for the line generator
-    .curve(d3.curveMonotoneX) // apply smoothing to the line
+    // The number of datapoints
+    var n = 9;
 
 
-var riskNeutral = d3.line()
-    .x(function(d, i) { return xScale(i + 1); }) // set the x values for the line generator
-    .y(function(d) { return yScale(d.riskNeutral); }) // set the y values for the line generator
-    .curve(d3.curveMonotoneX) // apply smoothing to the line
+    // 5. X scale
+    var xScale = d3.scaleLinear()
+        .domain([1, 8]) // input
+        .range([0, width]); // output
 
-// 8. An array of objects of length N. Each object has key -> value pair, the key being "y" and the value is a random number
-var dataset = {{ data.chart_data | safe }}
-console.log(dataset)
+    // 6. Y scale
+    var yScale = d3.scaleLinear()
+        .domain([0, 1]) // input
+        .range([height, 0]); // output
 
-// 1. Add the SVG to the page and employ #2
-var svg = d3.select("#graphDiv").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    // 7. d3's line generator
+    var safeChoices = d3.line()
+        .x(function (d, i) {
+            return xScale(i + 1);
+        }) // set the x values for the line generator
+        .y(function (d) {
+            return yScale(d.safeChoice);
+        }) // set the y values for the line generator
+        .curve(d3.curveMonotoneX) // apply smoothing to the line
 
-// 3. Call the x axis in a group tag
-svg.append("g")
-    .attr("class", "x axis")
-    .attr("transform", "translate(0," + height + ")")
-    .call(d3.axisBottom(xScale)); // Create an axis component with d3.axisBottom
 
-// 4. Call the y axis in a group tag
-svg.append("g")
-    .attr("class", "y axis")
-    .call(d3.axisLeft(yScale)); // Create an axis component with d3.axisLeft
+    var riskNeutral = d3.line()
+        .x(function (d, i) {
+            return xScale(i + 1);
+        }) // set the x values for the line generator
+        .y(function (d) {
+            return yScale(d.riskNeutral);
+        }) // set the y values for the line generator
+        .curve(d3.curveMonotoneX) // apply smoothing to the line
 
-// 9. Append the path, bind the data, and call the line generator
-svg.append("path")
-    .datum(dataset) // 10. Binds data to the line
-    .attr("class", "line") // Assign a class for styling
-    .attr("d", safeChoices); // 11. Calls the line generator
+    // 8. An array of objects of length N. Each object has key -> value pair, the key being "y" and the value is a random number
+    var dataset = {{data.chart_data | safe}}
 
-svg.append("path")
-    .datum(dataset) // 10. Binds data to the line
-    .attr("class", "riskNeutral") // Assign a class for styling
-    .attr("d", riskNeutral); // 11. Calls the line generator
+    console.log(dataset)
 
-// 12. Appends a circle for each datapoint
-svg.selectAll(".dot")
-    .data(dataset)
-  .enter().append("circle") // Uses the enter().append() method
-    .attr("class", "dot") // Assign a class for styling
-    .attr("cx", function(d, i) { return xScale(i + 1) })
-    .attr("cy", function(d) { return yScale(d.safeChoice) })
-    .attr("r", 5)
-      .on("mouseover", function(a, b, c) {
-  			console.log(a)
-        this.attr('class', 'focus')
-		})
-      .on("mouseout", function() {  })
-//       .on("mousemove", mousemove);
+    // 1. Add the SVG to the page and employ #2
+    var svg = d3.select("#graphDiv").append("svg")
+        .attr("viewBox", `0 0 960 500`);
 
-//   var focus = svg.append("g")
-//       .attr("class", "focus")
-//       .style("display", "none");
+    // 3. Call the x axis in a group tag
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(xScale)); // Create an axis component with d3.axisBottom
 
-//   focus.append("circle")
-//       .attr("r", 4.5);
+    // 4. Call the y axis in a group tag
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(d3.axisLeft(yScale)); // Create an axis component with d3.axisLeft
 
-//   focus.append("text")
-//       .attr("x", 9)
-//       .attr("dy", ".35em");
+    // 9. Append the path, bind the data, and call the line generator
+    svg.append("path")
+        .datum(dataset) // 10. Binds data to the line
+        .attr("class", "line") // Assign a class for styling
+        .attr("d", safeChoices); // 11. Calls the line generator
 
-//   svg.append("rect")
-//       .attr("class", "overlay")
-//       .attr("width", width)
-//       .attr("height", height)
-//       .on("mouseover", function() { focus.style("display", null); })
-//       .on("mouseout", function() { focus.style("display", "none"); })
-//       .on("mousemove", mousemove);
+    svg.append("path")
+        .datum(dataset) // 10. Binds data to the line
+        .attr("class", "riskNeutral") // Assign a class for styling
+        .attr("d", riskNeutral); // 11. Calls the line generator
 
-//   function mousemove() {
-//     var x0 = x.invert(d3.mouse(this)[0]),
-//         i = bisectDate(data, x0, 1),
-//         d0 = data[i - 1],
-//         d1 = data[i],
-//         d = x0 - d0.date > d1.date - x0 ? d1 : d0;
-//     focus.attr("transform", "translate(" + x(d.date) + "," + y(d.close) + ")");
-//     focus.select("text").text(d);
-//   }
+    // svg.append("circle").attr("cx", 700).attr("cy", 20).attr("r", 6).style("fill", "#69b3a2")
+    // svg.append("text").attr("x", 720).attr("y", 25).text("Choices made").style("font-size", "18px").attr("alignment-baseline", "middle")
+    // svg.append("circle").attr("cx", 700).attr("cy", 40).attr("r", 6).style("fill", "#000")
+    // svg.append("text").attr("x", 720).attr("y", 45).text("Risk Neutral").style("font-size", "18px").attr("alignment-baseline", "middle")
+
+    // 12. Appends a circle for each datapoint
+    svg.selectAll(".dot")
+        .data(dataset)
+        .enter().append("circle") // Uses the enter().append() method
+        .attr("class", "dot") // Assign a class for styling
+        .attr("cx", function (d, i) {
+            return xScale(i + 1)
+        })
+        .attr("cy", function (d) {
+            return yScale(d.safeChoice)
+        })
+        .attr("r", 5)
+        .on("mouseover", function (a, b, c) {
+            console.log(a)
+            this.attr('class', 'focus')
+        })
+        .on("mouseout", function () {
+        })
+    //       .on("mousemove", mousemove);
+
+    //   var focus = svg.append("g")
+    //       .attr("class", "focus")
+    //       .style("display", "none");
+
+    //   focus.append("circle")
+    //       .attr("r", 4.5);
+
+    //   focus.append("text")
+    //       .attr("x", 9)
+    //       .attr("dy", ".35em");
+
+    //   svg.append("rect")
+    //       .attr("class", "overlay")
+    //       .attr("width", width)
+    //       .attr("height", height)
+    //       .on("mouseover", function() { focus.style("display", null); })
+    //       .on("mouseout", function() { focus.style("display", "none"); })
+    //       .on("mousemove", mousemove);
+
+    //   function mousemove() {
+    //     var x0 = x.invert(d3.mouse(this)[0]),
+    //         i = bisectDate(data, x0, 1),
+    //         d0 = data[i - 1],
+    //         d1 = data[i],
+    //         d = x0 - d0.date > d1.date - x0 ? d1 : d0;
+    //     focus.attr("transform", "translate(" + x(d.date) + "," + y(d.close) + ")");
+    //     focus.select("text").text(d);
+    //   }
 </script>
 
 
