@@ -49,12 +49,13 @@ risk_neutral = [1, 1, 1, 0, 0, 0, 0, 0]
 
 @app.route("/")
 def index():
+    title = "A Simple Flask Application"
     n = df.shape[0]
     chart_df = pd.DataFrame({'safeChoice': safeChoices, 'riskNeutral': risk_neutral})
     chart_data = chart_df.to_dict(orient='records')
     chart_data = json.dumps(chart_data, indent=2)
     data = {'chart_data': chart_data}
-    return render_template("index.html", data=data, n=n, winners=winners, len_winners=len_winners)
+    return render_template("index.html", data=data, n=n, winners=winners, len_winners=len_winners, title=title)
 
 
 # @app.route('/participant/<participant_id>', methods=['GET'])
